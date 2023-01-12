@@ -2,11 +2,14 @@ import React, { useState } from "react";
 
 const Input = () => {
   "use strict";
-  const [FileInput, setFileInput] = useState("");
+  const [FileInput, setFileInput] = useState('');
   const [text, setText] = useState("Download");
-  const download = () => {
+  const download = (e) => {
+    e.preventDefault();
     setText("Downloading...");
-    fetchFile(FileInput);
+    let url = new URL(FileInput);
+    // console.log(url.href)
+    fetchFile(url.href);
   };
 
   function fetchFile(url) {
@@ -14,10 +17,10 @@ const Input = () => {
       .then((res) => res.blob())
       .then((file) => {
         let tempUrl = URL.createObjectURL(file);
-        // console.log(tempUrl);
+        console.log(tempUrl);
         const aTag = document.createElement("a");
         aTag.href = tempUrl;
-        aTag.download = url.replace(/^.*[\\\/]/, "");
+        aTag.download = url.replace(/^.*[\\\/]/, '');
         document.body.appendChild(aTag);
         aTag.click();
         setText("Download");
@@ -32,11 +35,13 @@ const Input = () => {
 
   return (
     <div className="w-3/4">
-      <input
+    <form action="#">
+    <input
         type="url"
         placeholder="Paste your url.."
         className="px-3 py-3 my-7 text-xl  text-bold placeholder-sec text-sec relative bg-pri rounded  border-0 shadow outline-none focus:outline-none focus:ring w-full"
         onChange={(event) => setFileInput(event.target.value)}
+        required
       />
       <button
         type="button"
@@ -60,6 +65,8 @@ const Input = () => {
         </svg>
         {text}
       </button>
+    </form>
+      
     </div>
   );
 };
